@@ -14,3 +14,4 @@ wandb/
 outputs/
 adapters/
 .claude/worktrees/
+harness/
