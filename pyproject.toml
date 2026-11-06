@@ -23,7 +23,7 @@ gen = [
 ]
 
 [tool.setuptools]
-packages = ["rlvr"]
+packages = ["rlvr", "lab"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

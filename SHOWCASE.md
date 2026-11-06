@@ -15,7 +15,7 @@ many the visible test suites actually catch (Phase B), then probed how often an
 *untrained* base model already produces visible-passing code that fails a held-out
 extended suite (Phase C), and mined a 39-task transfer set from this account's own repos
 so generalization can later be tested on code the benchmarks never saw (Phase E). Total
-spend: **~$0, no GPU, run on a laptop**. Training (Phase D, $30–80) is deliberately
+spend: **~$0, no GPU, run on a laptop** (spend ⚠️ not re-derived: no results file records it). Training (Phase D, $30–80) is deliberately
 *behind* these numbers — it now sits behind a measurement instead of a hope
 (`docs/07-rescope-verifier-adequacy.md` is the pre-registered plan; `docs/08-…` the
 results).
@@ -52,7 +52,10 @@ that a statement about the suites, not about the code.
 
 ### 2. A directional prediction, made before the data
 
-MBPP's visible suites are ~3× thinner than HumanEval's (~3.1 vs 9.6 asserts per task).
+MBPP's visible suites are ~3× thinner than HumanEval's (~3.1 vs 9.6 asserts per task;
+the 9.6 and the ~3× ratio are ⚠️ not re-derived: the committed rows give 3.1 visible inputs
+per mutated MBPP task and 10.1 per mutated HumanEval task, and assert counts are not in
+`results/`).
 The instrument analysis in `docs/07` predicted the gap should therefore be *larger* on
 MBPP — and it is, in both phases (+6.4 vs +3.6 mutation gap; 17.8% vs 12.2% model gap).
 The writeup still notes the Phase C intervals overlap, so it reads its own confirmation
@@ -72,7 +75,7 @@ would have picked whichever ratio flattered the thesis.
 
 ### 4. Pre-registered bars, and the fallback written down in advance
 
-`docs/07` fixed the decision structure before the work: Phases A–C consume $0 and gate
+`docs/07` fixed the decision structure before the work: Phases A–C consume $0 (⚠️ not re-derived: a plan budget, not a recorded spend) and gate
 Phase D's spend; the own-repo transfer set (Phase E) carried a pre-registered bar of
 **≥30 admissible tasks** *and* a pre-written fallback — "<30 → fall back to public
 holdout only, and say so." Result: **39 admissible tasks** (`data/e-corpus/`), bar met,
@@ -102,6 +105,12 @@ comparison unless the denominators match. The plain-language version of the meth
 non-specialists) ships in the repo as `docs/testing-the-tests.html`.
 
 ---
+
+*Re-derive: `python3 -m lab check` recomputes every result on this page from the committed rows
+in `results/` and `data/e-corpus/`, checks each against its run manifest and its column on this
+page, checks the quoted plan constants against their source docs, and fails if anything
+disagrees or a number is unaccounted for (added 2026-11-06; the write-up is unchanged apart from
+the ⚠️ marks).*
 
 *Plan: `docs/07-rescope-verifier-adequacy.md` · results: `docs/08-results-verifier-adequacy.md`
 · raw artifacts: `results/` · concepts from scratch: `docs/01–06`.*

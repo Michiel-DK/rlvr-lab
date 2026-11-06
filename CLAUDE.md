@@ -1,4 +1,30 @@
-# rlvr-codegen — CLAUDE.md
+# rlvr-lab — CLAUDE.md
+
+One area (does a test-pass RL reward teach correct code?), one case set (`docs/CASES.md`),
+predictions written down first. Read `SHOWCASE.md` and `LESSONS.md` before changing any method.
+
+## Lab bearings
+
+```sh
+python3 -m pytest -q                      # the gate
+python3 -m lab check                      # re-derives the published audit from results/; exit 1 on drift
+python3 -m lab check results/<run>.json   # a lane's single-file results
+python3 -m lab diff <a> <b>
+python3 -m lab run <method> --name <run>  # needs a committed predictions/<run>.md; never overwrites
+# internal dev harness (private): checked out locally at harness/, gitignored, not part of this tree
+```
+
+## Lab rules
+
+- `results/` is committed evidence. A lane reads it and never regenerates it.
+- A number is posted only with the command that re-derives it. A number `lab check` cannot
+  re-derive carries "⚠️ not re-derived" on the page, or the check fails.
+- Work in a worktree from `origin/main`; open a PR; never merge from a lane.
+- What cannot be public does not go in this repo. Nothing from the archived private dev repo enters it.
+
+---
+
+## History (from the archived dev repo)
 
 RLVR code-generation experiments. Early stage: `README.md` + `docs/` only — read both before
 assuming any code exists.
