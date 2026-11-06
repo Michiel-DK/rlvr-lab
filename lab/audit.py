@@ -268,19 +268,41 @@ def page_phrases(b, c, e):
     return out
 
 
+def page_pairs(b, c):
+    """HumanEval/MBPP values bound to their order on SHOWCASE.md, so a swapped pair fails."""
+    he, mb, che, cmb = b["humaneval"], b["mbpp"], c["humaneval"], c["mbpp"]
+    return [
+        f"| {pct(he['visible'])} | {pct(mb['visible'])} |",
+        f"| **{pp(he['gap_pooled'])}** | **{pp(mb['gap_pooled'])}** |",
+        f"| {pct(che['pass_k_visible'][0])} | {pct(cmb['pass_k_visible'][0])} |",
+        f"| **{pct(che['gap_rate'])}** | **{pct(cmb['gap_rate'])}** |",
+        f"{num(he['n_mutants'])} mutants / {he['n_tasks']}\ntasks on HumanEval; {num(mb['n_mutants'])} / {mb['n_tasks']} on MBPP",
+        f"({he['survived_both']} / {mb['survived_both']})",
+        f"({signed(mb['gap_pooled'])} vs {signed(he['gap_pooled'])} mutation gap; "
+        f"{pct(cmb['gap_rate'])} vs {pct(che['gap_rate'])} model gap)",
+        f"{pct(he['leak_rate'])} (HumanEval) / {pct(mb['leak_rate'])} (MBPP)",
+        f"{pct(che['gap_rate'])} / {pct(cmb['gap_rate'])}",
+    ]
+
+
 def readme_phrases(b, c):
     """The README Results table, which carries the intervals as well."""
     out = []
-    for x in (b["humaneval"], b["mbpp"]):
-        out += [f"{pct(x['visible'])} ({ci(*x['visible_ci'])})", f"**{signed(x['gap_pooled'])} pp**",
-                f"task-mean {signed(x['gap_point'])}, CI {signed(x['gap_ci'][0])} to {signed(x['gap_ci'][1])}",
-                f"{num(x['n_mutants'])}", f"{x['n_tasks']} tasks, {x['n_tasks_mutated']} with"]
-    for x in (c["humaneval"], c["mbpp"]):
-        out.append(f"{x['n_tasks']} tasks / {num(x['n_samples'])} samples" if x is c["humaneval"]
-                   else f"{x['n_tasks']} / {num(x['n_samples'])}")
-        lo, hi = x["pass_k_visible"][1]
-        out += [f"{pct(x['pass_k_visible'][0])} ({ci(lo, hi)})",
-                f"{pct(x['gap_rate'])}** ({x['gap_num']}/{x['gap_den']}, CI {ci(*x['gap_ci'])})"]
+    he, mb, che, cmb = b["humaneval"], b["mbpp"], c["humaneval"], c["mbpp"]
+
+    def row(cells):  # HumanEval cell then MBPP cell, so a swapped column fails
+        return "| " + " | ".join(cells) + " |"
+
+    out = [
+        f"{num(he['n_mutants'])} mutants over {he['n_tasks']} tasks, {he['n_tasks_mutated']} with at least one mutant; "
+        f"{num(mb['n_mutants'])} over {mb['n_tasks']} tasks, {mb['n_tasks_mutated']} with mutants",
+        f"{che['n_tasks']} tasks / {num(che['n_samples'])} samples, {cmb['n_tasks']} / {num(cmb['n_samples'])}",
+        row(f"{pct(x['visible'])} ({ci(*x['visible_ci'])})" for x in (he, mb)),
+        row(f"**{signed(x['gap_pooled'])} pp** (task-mean {signed(x['gap_point'])}, "
+            f"CI {signed(x['gap_ci'][0])} to {signed(x['gap_ci'][1])})" for x in (he, mb)),
+        row(f"{pct(x['pass_k_visible'][0])} ({ci(*x['pass_k_visible'][1])})" for x in (che, cmb)),
+        row(f"**{pct(x['gap_rate'])}** ({x['gap_num']}/{x['gap_den']}, CI {ci(*x['gap_ci'])})" for x in (che, cmb)),
+    ]
     return out
 
 
@@ -326,7 +348,10 @@ def run(root=ROOT, page=None, readme=None):
     e = phase_e(root, rep)
     values = {"he_inputs": b["humaneval"]["mean_visible_inputs"], "he_mutated": b["humaneval"]["n_tasks_mutated"]}
     page = Path(page) if page else root / "SHOWCASE.md"
-    check_page(page.read_text(), page_phrases(b, c, e), values, rep, root, page.name)
+    ptext = page.read_text()
+    check_page(ptext, page_phrases(b, c, e), values, rep, root, page.name)
+    for p in page_pairs(b, c):
+        (rep.ok if p in ptext else rep.fail)(f"{page.name}: HumanEval/MBPP order {p!r}")
     readme = Path(readme) if readme else root / "README.md"
     rtext = readme.read_text()
     for p in readme_phrases(b, c):

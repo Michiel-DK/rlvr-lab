@@ -31,6 +31,16 @@ def test_page_drift_fails(tmp_path, edit):
     assert main(["check", "--page", str(page)]) == 1
 
 
+def test_swapped_columns_fail(tmp_path):
+    page = tmp_path / "SHOWCASE.md"
+    page.write_text((ROOT / "SHOWCASE.md").read_text().replace("| 89.2% | 87.1% |", "| 87.1% | 89.2% |"))
+    assert main(["check", "--page", str(page)]) == 1
+    readme = tmp_path / "README.md"
+    readme.write_text((ROOT / "README.md").read_text().replace(
+        "| 89.2% (88.0–90.4) | 87.1% (85.9–88.2) |", "| 87.1% (85.9–88.2) | 89.2% (88.0–90.4) |"))
+    assert main(["check", "--readme", str(readme)]) == 1
+
+
 def test_row_drift_fails(tmp_path):
     for d in ("results", "data", "docs"):
         shutil.copytree(ROOT / d, tmp_path / d)

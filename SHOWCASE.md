@@ -106,9 +106,11 @@ non-specialists) ships in the repo as `docs/testing-the-tests.html`.
 
 ---
 
-*Re-derive: `python3 -m lab check` recomputes every other number on this page from the
-committed rows in `results/` and `data/e-corpus/`, checks it against the run manifests, and
-fails if the page and the rows disagree (added 2026-11-06; the write-up text is unchanged).*
+*Re-derive: `python3 -m lab check` recomputes every result on this page from the committed rows
+in `results/` and `data/e-corpus/`, checks each against its run manifest and its column on this
+page, checks the quoted plan constants against their source docs, and fails if anything
+disagrees or a number is unaccounted for (added 2026-11-06; the write-up is unchanged apart from
+the ⚠️ marks).*
 
 *Plan: `docs/07-rescope-verifier-adequacy.md` · results: `docs/08-results-verifier-adequacy.md`
 · raw artifacts: `results/` · concepts from scratch: `docs/01–06`.*
